@@ -1,0 +1,45 @@
+<html>
+  <head>
+
+    <meta:og title="Star Wars" >
+    <meta:og description="The best movie in the world" />
+    <meta:og image="http://example.org/image.jpg" />
+
+    <script src="/jquery.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io.connect('http://localhost:8080/ws/urlfetch');
+      socket.on('urlfetch_response', function (data) {
+        console.log(data);
+      });
+      
+      socket.on('ready', function() {
+        console.log('authorization passed'); 
+      });
+
+
+      $(function() {
+
+        // This call sets auth token for the current session
+        socket.emit('set_auth', { auth_token : 'abcd' }); 
+
+        $('#form').submit(function() {
+          socket.emit('urlfetch', { url : $('#url').val() }); 
+          return false; 
+        }); 
+      }); 
+
+    </script>
+
+  </head>
+  <body>
+    <h1>URL fetcher example page</h1>
+
+    <form action="/" method="get" id="form"/> 
+      Input URL: 
+      <input type="text" name="url" id="url" />
+      <input type="submit" id="submit" />
+    </form>
+    
+  </body>
+</html>
